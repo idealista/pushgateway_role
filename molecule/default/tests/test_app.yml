@@ -17,7 +17,7 @@ user:
         - pushgateway
       shell: /usr/sbin/nologin
 group:
-  examplegroup:
+  pushgateway:
     exists: true
 
 file:
