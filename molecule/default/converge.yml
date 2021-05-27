@@ -1,0 +1,5 @@
+---
+- name: Converge
+  hosts: pushgateway_group
+  roles:
+    - role: pushgateway_role
