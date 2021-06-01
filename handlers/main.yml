@@ -1,0 +1,7 @@
+---
+
+- name: restart pushgateway
+  systemd:
+    name: pushgateway
+    state: restarted
+  when: pushgateway_service_state != 'stopped'

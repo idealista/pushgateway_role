@@ -1,0 +1,43 @@
+---
+## TODO: Remember to adapt goss tests to your convenience
+
+service:
+  pushgateway:
+    enabled: true
+    running: true
+
+process:
+  pushgateway:
+    running: true
+
+user:
+  pushgateway:
+      exists: true
+      groups:
+        - pushgateway
+      shell: /usr/sbin/nologin
+group:
+  pushgateway:
+    exists: true
+
+file:
+  /opt/pushgateway:
+    owner: pushgateway
+    group: pushgateway
+    exists: true
+    filetype: directory
+
+  /opt/pushgateway/bin:
+    owner: pushgateway
+    group: pushgateway
+    
+    exists: true
+    filetype: directory
+
+http:
+  http://localhost:9091/-/ready:
+    status: 200
+  http://localhost:9091/-/healthy:
+    status: 200
+  http://localhost:9091/metrics:
+    status: 200

@@ -1,0 +1,16 @@
+---
+
+galaxy_info:
+  author: idealista
+  company: Idealista S.A.U.
+  description: Pushgateway Role
+  min_ansible_version: 4.0.0
+  license: Apache 2.0
+  galaxy-tags:
+    - monitoring
+    - pushgateway
+    - prometheus
+  platforms:
+    - name: Debian
+      versions:
+        - buster

@@ -1,0 +1,24 @@
+{{ ansible_managed | comment }}
+[Unit]
+Description=pushgateway
+Documentation={{ pushgateway_documentation_link }}
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+PrivateTmp={{ pushgateway_private_tmp }}
+User={{ pushgateway_user }}
+Group={{ pushgateway_group }}
+RuntimeDirectory=pushgateway
+LimitNOFILE={{ pushgateway_max_files }}
+
+ExecStart={{ pushgateway_bin_path }}/{{ pushgateway_exec_name }} {% for option in pushgateway_options %}{% if option %}{{ option }} {% endif %}{% endfor %}
+
+StandardOutput={{ pushgateway_log_output }}
+StandardError={{ pushgateway_log_output }}
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGTERM
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

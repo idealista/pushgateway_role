@@ -1,0 +1,93 @@
+---
+
+- name: PUSHGATEWAY | Ensure pushgateway group
+  group:
+    name: "{{ pushgateway_group }}"
+    system: yes
+    state: present
+  tags:
+    - pushgateway_install
+
+- name: PUSHGATEWAY | Ensure pushgateway user
+  user:
+    name: "{{ pushgateway_user }}"
+    group: "{{ pushgateway_group }}"
+    system: yes
+    shell: /usr/sbin/nologin
+    createhome: no
+  tags:
+    - pushgateway_install
+
+- name: PUSHGATEWAY | Ensure skeleton paths
+  file:
+    dest: "{{ item }}"
+
+    owner: "{{ pushgateway_user }}"
+    group: "{{ pushgateway_group }}"
+
+    state: directory
+  with_items:
+    - "{{ pushgateway_skeleton_paths }}"
+  tags:
+    - pushgateway_install
+
+- name: PUSHGATEWAY | Ensure skeleton log paths
+  file:
+    dest: "{{ pushgateway_log_path }}"
+
+    owner: "{{ pushgateway_user }}"
+    group: "{{ pushgateway_group }}"
+
+    state: directory
+  when: pushgateway_log_file is defined
+  tags:
+    - pushgateway_install
+
+- name: PUSHGATEWAY | Check pushgateway version
+  command: "{{ pushgateway_exec_name }} --version"
+  register: pushgateway_check
+  changed_when: false
+  ignore_errors: true
+  check_mode: no
+  tags:
+    - pushgateway_install
+
+- name: PUSHGATEWAY | Download package
+  get_url:
+    url: "{{ pushgateway_url }}"
+    dest: "{{ pushgateway_package_path }}"
+  when: pushgateway_force_reinstall or pushgateway_check is failed or pushgateway_version not in pushgateway_check.stderr
+  tags:
+    - pushgateway_install
+
+- name: PUSHGATEWAY | Extract downloaded package
+  unarchive:
+    src: "{{ pushgateway_package_path }}"
+    dest: "{{ pushgateway_download_path }}"
+    remote_src: True
+  when: pushgateway_force_reinstall or pushgateway_check is failed or pushgateway_version  not in pushgateway_check.stderr
+  tags:
+    - pushgateway_install
+
+- name: PUSHGATEWAY | Copy binary
+  copy:
+    src: "{{ pushgateway_src_bin }}"
+    dest: "{{ pushgateway_bin_path }}/{{ pushgateway_exec_name }}"
+
+    owner: "{{ pushgateway_user }}"
+    group: "{{ pushgateway_group }}"
+
+    remote_src: True
+    mode: 0755
+  when: pushgateway_force_reinstall or pushgateway_check is failed or pushgateway_version not in pushgateway_check.stderr
+  tags:
+    - pushgateway_install
+
+- name: PUSHGATEWAY | Link binary
+  file:
+    src: "{{ pushgateway_bin_path }}/{{ pushgateway_exec_name }}"
+    dest: "/usr/bin/{{ pushgateway_exec_name }}"
+    state: link
+  when: pushgateway_force_reinstall or pushgateway_check is failed or pushgateway_version not in pushgateway_check.stderr
+  tags:
+    - pushgateway_install

@@ -1,0 +1,21 @@
+---
+
+- name: PUSHGATEWAY | Copy Daemon script
+  template:
+    src: pushgateway.service.j2
+    dest: /etc/systemd/system/pushgateway.service
+    mode: 0644
+    owner: root
+    group: root
+  notify: restart pushgateway
+  tags:
+    - pushgateway_service
+
+- name: PUSHGATEWAY | Configuring service
+  systemd:
+    name: pushgateway
+    state: "{{ pushgateway_service_state }}"
+    enabled: "{{ pushgateway_service_enabled }}"
+    daemon_reload: yes
+  tags:
+    - pushgateway_service

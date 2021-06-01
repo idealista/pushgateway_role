@@ -1,0 +1,30 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint: |
+  yamllint .
+  ansible-lint .
+platforms:
+  - name: pushgateway
+    groups:
+      - pushgateway_group
+    image: ${MOLECULE_DISTRO:-debian:buster-slim}
+    published_ports:
+      - "0.0.0.0:9091:9091/tcp"
+    privileged: false
+    capabilities:
+      - SYS_ADMIN
+    tmpfs:
+      - /tmp
+      - /run
+      - /run/lock
+    volumes:
+      - '/sys/fs/cgroup:/sys/fs/cgroup:ro'
+    command: '/lib/systemd/systemd'
+    stop_signal: 'RTMIN+3'
+provisioner:
+  name: ansible
+verifier:
+  name: ansible
