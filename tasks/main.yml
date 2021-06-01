@@ -5,11 +5,6 @@
   tags:
     - pushgateway_install
 
-- name: PUSHGATEWAY | Configure
-  include: config.yml
-  tags:
-    - pushgateway_configure
-
 - name: PUSHGATEWAY | Service
   include: service.yml
   tags:

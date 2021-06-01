@@ -3,7 +3,7 @@
 ## General
 # Version
 pushgateway_version: 1.4.0
-pushgateway_release_system: linux-amd64
+pushgateway_release_system: "linux-{{ pushgatway_arch }}"
 
 # Package URL
 pushgateway_release_name: "pushgateway-{{ pushgateway_version }}.{{ pushgateway_release_system }}"
